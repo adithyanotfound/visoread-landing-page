@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import heroImg from "@/assets/visoread-hero-bg.png";
 
@@ -20,7 +20,7 @@ const sections = [
   },
 ];
 
-const ScrollVideoHero = () => {
+const ScrollVideoHero = ({ children }: PropsWithChildren) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const currentTimeRef = useRef(0);
@@ -34,9 +34,9 @@ const ScrollVideoHero = () => {
     offset: ["start start", "end end"],
   });
 
-  // Image fades out as we enter, video fades in over the same window.
-  const imageOpacity = useTransform(scrollYProgress, [0, 0.08, 0.18], [1, 1, 0]);
-  const videoOpacity = useTransform(scrollYProgress, [0, 0.08, 0.18], [0, 0.4, 1]);
+  // Transition starts immediately after the first scroll into this stage.
+  const imageOpacity = useTransform(scrollYProgress, [0, 0.03, 0.12], [1, 0.65, 0]);
+  const videoOpacity = useTransform(scrollYProgress, [0, 0.03, 0.12], [0, 0.6, 1]);
 
   const sectionRanges = useMemo<Array<[number, number, number, number]>>(
     () => [
@@ -60,19 +60,25 @@ const ScrollVideoHero = () => {
   const ys = [firstY, secondY, thirdY];
   const blurs = [firstBlur, secondBlur, thirdBlur];
 
-  // Drive the video currentTime from scroll, smoothed with lerp.
+  const syncTargetTime = useCallback(() => {
+    if (!durationRef.current) return;
+    targetTimeRef.current = Math.min(
+      Math.max(scrollYProgress.get() * durationRef.current, 0),
+      durationRef.current - 0.05,
+    );
+  }, [scrollYProgress]);
+
+  // Drive the video currentTime from the full post-hero scroll distance.
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    const lerpFactor = 0.12;
+    const lerpFactor = 0.16;
 
     const markReady = () => {
       if (!video.duration || isNaN(video.duration)) return;
       durationRef.current = video.duration;
-      // Initialize to current scroll position so first paint matches scroll.
-      const p = scrollYProgress.get();
-      targetTimeRef.current = p * durationRef.current;
+      syncTargetTime();
       currentTimeRef.current = targetTimeRef.current;
       try {
         video.currentTime = currentTimeRef.current;
@@ -124,7 +130,10 @@ const ScrollVideoHero = () => {
 
     const unsubscribe = scrollYProgress.on("change", (p) => {
       if (durationRef.current) {
-        targetTimeRef.current = p * durationRef.current;
+        targetTimeRef.current = Math.min(
+          Math.max(p * durationRef.current, 0),
+          durationRef.current - 0.05,
+        );
       }
     });
 
@@ -137,12 +146,12 @@ const ScrollVideoHero = () => {
       video.removeEventListener("canplay", onCanPlay);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [scrollYProgress]);
+  }, [scrollYProgress, syncTargetTime]);
 
   const indicatorOpacity = useTransform(scrollYProgress, [0, 0.05], [1, 0]);
 
   return (
-    <section ref={targetRef} className="relative h-[300vh] w-full">
+    <section ref={targetRef} className="relative w-full">
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* Hero image — visible at the very top of this section, fades out as video takes over */}
         <motion.img
@@ -160,6 +169,7 @@ const ScrollVideoHero = () => {
           muted
           playsInline
           preload="auto"
+          aria-hidden="true"
           style={{ opacity: videoReady ? videoOpacity : 0 }}
           className="absolute inset-0 h-full w-full object-cover"
         />
@@ -214,6 +224,11 @@ const ScrollVideoHero = () => {
             </span>
           </div>
         </motion.div>
+      </div>
+
+      <div className="relative z-10 -mt-screen">
+        <div className="h-[300vh]" />
+        {children}
       </div>
     </section>
   );
