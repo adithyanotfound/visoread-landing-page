@@ -9,6 +9,7 @@ import {
   Phone,
   MapPin,
   ArrowRight,
+  ArrowDown,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
@@ -66,6 +67,80 @@ const steps = [
     body: "Clear audio responses guide you through reading, money, and daily tasks.",
   },
 ];
+
+const FeatureVisual = ({ index }: { index: number }) => {
+  switch (index) {
+    case 0: // AI Voice Assistant
+      return (
+        <div className="flex h-full items-center justify-center gap-2 opacity-60">
+          {[...Array(5)].map((_, i) => (
+            <div
+              key={i}
+              className={`w-3 md:w-4 rounded-full bg-white animate-waveform-${i + 1}`}
+            />
+          ))}
+        </div>
+      );
+    case 1: // Read Any Text Aloud
+      return (
+        <div className="relative flex h-full items-center justify-center">
+          <div className="relative flex h-56 w-40 flex-col gap-4 overflow-hidden rounded-2xl border border-white/15 bg-black/40 p-6 shadow-2xl backdrop-blur-sm md:h-72 md:w-52 md:gap-6 md:p-8">
+            <div className="h-2 w-full rounded-full bg-white/20 md:h-2.5" />
+            <div className="h-2 w-3/4 rounded-full bg-white/20 md:h-2.5" />
+            <div className="h-2 w-full rounded-full bg-white/20 md:h-2.5" />
+            <div className="h-2 w-5/6 rounded-full bg-white/20 md:h-2.5" />
+            <div className="h-2 w-2/3 rounded-full bg-white/20 md:h-2.5" />
+            {/* Scanning laser */}
+            <div className="animate-scan absolute left-0 right-0 h-[1px] bg-white shadow-[0_0_15px_3px_rgba(255,255,255,0.4)]" />
+          </div>
+        </div>
+      );
+    case 2: // Currency Detection
+      return (
+        <div className="relative flex h-full items-center justify-center">
+          {/* Banknote */}
+          <div className="animate-float relative flex h-36 w-60 items-center justify-center overflow-hidden rounded-xl border border-white/20 bg-white/5 shadow-2xl backdrop-blur-sm md:h-44 md:w-72">
+            <div className="h-16 w-16 rounded-full border border-white/20 opacity-50 md:h-24 md:w-24" />
+            <div className="absolute right-4 top-4 font-mono text-xs text-white/50 md:right-5 md:top-5 md:text-sm">
+              100
+            </div>
+            <div className="absolute bottom-4 left-4 font-mono text-xs text-white/50 md:bottom-5 md:left-5 md:text-sm">
+              100
+            </div>
+          </div>
+          {/* Viewfinder corners */}
+          <div className="absolute h-48 w-72 opacity-40 md:h-60 md:w-80">
+            <div className="absolute left-0 top-0 h-6 w-6 border-l border-t border-white" />
+            <div className="absolute right-0 top-0 h-6 w-6 border-r border-t border-white" />
+            <div className="absolute bottom-0 left-0 h-6 w-6 border-b border-l border-white" />
+            <div className="absolute bottom-0 right-0 h-6 w-6 border-b border-r border-white" />
+          </div>
+        </div>
+      );
+    case 3: // Smart Summaries
+      return (
+        <div className="relative flex h-full flex-col items-center justify-center gap-8 md:gap-12">
+          {/* Big document */}
+          <div className="flex w-40 flex-col gap-3 opacity-20 md:w-48 md:gap-4">
+            <div className="h-1.5 w-full rounded-full bg-white md:h-2" />
+            <div className="h-1.5 w-full rounded-full bg-white md:h-2" />
+            <div className="h-1.5 w-4/5 rounded-full bg-white md:h-2" />
+            <div className="h-1.5 w-full rounded-full bg-white md:h-2" />
+            <div className="h-1.5 w-2/3 rounded-full bg-white md:h-2" />
+          </div>
+          {/* Arrow down */}
+          <ArrowDown className="h-6 w-6 animate-bounce text-white/50" strokeWidth={1.5} />
+          {/* Summary block */}
+          <div className="flex w-40 flex-col gap-3 rounded-2xl border border-white/15 bg-white/5 p-5 shadow-2xl backdrop-blur-sm md:w-48 md:gap-4 md:p-6">
+            <div className="h-1.5 w-full rounded-full bg-white/80 md:h-2" />
+            <div className="h-1.5 w-3/4 rounded-full bg-white/80 md:h-2" />
+          </div>
+        </div>
+      );
+    default:
+      return null;
+  }
+};
 
 const Index = () => {
   const [email, setEmail] = useState("");
@@ -212,9 +287,9 @@ const Index = () => {
           </ul>
           <a
             href="#contact"
-            className="rounded-full bg-foreground px-5 py-2.5 text-xs font-semibold tracking-wide text-background transition-transform hover:scale-[1.02] sm:text-sm"
+            className="rounded-full border border-white/20 bg-white/10 px-5 py-2.5 text-xs font-medium tracking-wide text-white transition-all hover:bg-white/20 sm:text-sm"
           >
-            PARTNER WITH US
+            Partner with us
           </a>
         </nav>
       </header>
@@ -249,14 +324,14 @@ const Index = () => {
               <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
                 <a
                   href="#contact"
-                  className="inline-flex items-center justify-center rounded-full bg-foreground px-8 py-4 text-sm font-semibold tracking-wide text-background transition-transform hover:scale-[1.02] sm:text-base"
+                  className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-8 py-3.5 text-sm font-medium tracking-wide text-white backdrop-blur-md transition-all hover:bg-white/20 sm:text-base"
                 >
-                  CONTACT US
+                  Contact Us
                 </a>
-                <p className="text-sm leading-snug text-foreground/75">
+                <p className="text-sm font-light leading-snug text-foreground/60">
                   Voice-first AI glasses
                   <br />
-                  built for the visually impaired
+                  built for the visually impaired.
                 </p>
               </div>
             </div>
@@ -309,14 +384,6 @@ const Index = () => {
           key={title}
           className="relative z-10 flex min-h-screen items-center px-4 py-20 sm:px-8 sm:py-24"
         >
-          {/* ambient glow */}
-          <div
-            className={`pointer-events-none absolute inset-0 ${
-              i % 2 === 0
-                ? "bg-[radial-gradient(60%_50%_at_20%_50%,hsl(var(--brand))/0.10,transparent_70%)]"
-                : "bg-[radial-gradient(60%_50%_at_80%_50%,hsl(var(--brand))/0.10,transparent_70%)]"
-            }`}
-          />
           <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-12">
             <div className={`hidden lg:block ${i % 2 === 1 ? "lg:order-2" : ""}`}>
               <span className="reveal inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium tracking-widest text-[hsl(var(--brand))] backdrop-blur">
@@ -331,19 +398,24 @@ const Index = () => {
             </div>
 
             <div className={i % 2 === 1 ? "lg:order-1" : ""}>
-              <div className="reveal reveal-delay-1 group relative flex min-h-[520px] w-full overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] via-white/[0.02] to-[hsl(var(--brand))]/[0.08] p-7 backdrop-blur-md sm:min-h-[560px] sm:p-10 lg:aspect-square lg:min-h-0 lg:p-14">
-                <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-[hsl(var(--brand))]/20 blur-3xl" />
+              <div className="reveal reveal-delay-1 group relative flex min-h-[520px] w-full overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.08] via-white/[0.03] to-transparent p-7 backdrop-blur-xl sm:min-h-[560px] sm:p-10 lg:aspect-square lg:min-h-0 lg:p-14 shadow-2xl">
+                <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
                 <div className="absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-white/5 blur-3xl" />
                 <div className="relative flex h-full w-full flex-col justify-between">
                   <div className="flex items-start justify-between gap-4">
-                    <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[hsl(var(--brand))] text-[hsl(var(--brand-foreground))] shadow-[0_20px_60px_-20px_hsl(var(--brand))]">
-                      <Icon className="h-7 w-7" strokeWidth={2.2} />
+                    <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur">
+                      <Icon className="h-6 w-6 opacity-80" strokeWidth={1.5} />
                     </span>
                     <div className="text-6xl font-bold tracking-tighter text-foreground/15 sm:text-7xl lg:hidden">
                       {String(i + 1).padStart(2, "0")}
                     </div>
                   </div>
-                  <div className="lg:hidden">
+                  {/* Dynamic Visual Centerpiece */}
+                  <div className="absolute inset-0 z-0 flex items-center justify-center p-8 pointer-events-none">
+                    <FeatureVisual index={i} />
+                  </div>
+
+                  <div className="relative z-10 lg:hidden">
                     <h3 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl">
                       {title}
                     </h3>
@@ -351,7 +423,7 @@ const Index = () => {
                       {body}
                     </p>
                   </div>
-                  <div className="hidden text-7xl font-bold tracking-tighter text-foreground/15 sm:text-8xl lg:block">
+                  <div className="relative z-10 hidden text-7xl font-bold tracking-tighter text-foreground/15 sm:text-8xl lg:block">
                     {String(i + 1).padStart(2, "0")}
                   </div>
                 </div>
@@ -421,19 +493,19 @@ const Index = () => {
                   <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 border border-white/10">
                     <Mail className="h-4 w-4" />
                   </span>
-                  hello@visoread.com
+                  sales.visoread@gmail.com
                 </li>
                 <li className="flex items-center gap-3">
                   <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 border border-white/10">
                     <Phone className="h-4 w-4" />
                   </span>
-                  +91 80000 00000
+                  +91 98765 43231
                 </li>
                 <li className="flex items-center gap-3">
                   <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 border border-white/10">
                     <MapPin className="h-4 w-4" />
                   </span>
-                  Bengaluru, India
+                  New Delhi, India
                 </li>
               </ul>
             </div>
