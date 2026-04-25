@@ -126,8 +126,9 @@ const ScrollVideoHero = ({ children, introVh = 400 }: ScrollVideoHeroProps) => {
   const overlayOpacity = useTransform(scrollYProgress, [0.5, 0.6], [0.5, 0.7]);
 
   return (
-    <section ref={targetRef} className="relative w-full" style={{ height: `${scrollVh}vh` }}>
-      {/* Sticky stage that holds the fixed video + overlaid scrolling content */}
+    <section ref={targetRef} className="relative w-full">
+      {/* Spacer that gives the intro extra scroll length before children start */}
+      <div aria-hidden style={{ height: `${introVh}vh` }} />
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* Background video — absolute inside the sticky stage so it stays put while we scroll */}
         <video
