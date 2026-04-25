@@ -122,8 +122,8 @@ const ScrollVideoHero = ({ children, introVh = 400 }: ScrollVideoHeroProps) => {
   );
 
   const indicatorOpacity = useTransform(scrollYProgress, [0, 0.03], [1, 0]);
-  // Dim the video a bit more once we leave the intro and enter feature content.
-  const overlayOpacity = useTransform(scrollYProgress, [0.5, 0.6], [0.5, 0.7]);
+  // Keep the video visible throughout — light dim only.
+  const overlayOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.45, 0.55, 0.6]);
 
   return (
     <section ref={targetRef} className="relative w-full">
