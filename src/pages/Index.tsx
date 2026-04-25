@@ -164,7 +164,7 @@ const Index = () => {
       </section>
 
       {/* ================= SCROLL VIDEO HERO ================= */}
-      <ScrollVideoHero />
+      <ScrollVideoHero>
 
       {/* ================= FEATURES INTRO ================= */}
       <section id="features" className="relative px-4 pt-24 sm:px-8 sm:pt-32">
@@ -370,6 +370,7 @@ const Index = () => {
           <span>© {new Date().getFullYear()} VisoRead. Built with care.</span>
         </footer>
       </section>
+      </ScrollVideoHero>
     </main>
   );
 };
