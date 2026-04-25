@@ -93,79 +93,35 @@ const Index = () => {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      {/* ================= HERO ================= */}
-      <section className="relative min-h-screen overflow-hidden">
-        <img
-          src={heroImg}
-          alt="Person wearing VisoRead smart glasses"
-          width={1920}
-          height={1080}
-          className="absolute inset-0 h-full w-full object-cover object-center opacity-90"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/40" />
-
-        <div className="relative z-10 flex min-h-screen flex-col">
-          {/* Nav */}
-          <header className="px-4 pt-5 sm:px-8 sm:pt-7">
-            <nav className="mx-auto flex max-w-7xl items-center justify-between rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur-xl sm:px-6 sm:py-3">
-              <a href="#" className="text-base font-semibold tracking-[0.2em]">
-                VISOREAD
-              </a>
-              <ul className="hidden items-center gap-8 md:flex">
-                {navItems.map((item) => (
-                  <li key={item.label}>
-                    <a
-                      href={item.href}
-                      className="text-sm text-foreground/80 transition-colors hover:text-foreground"
-                    >
-                      {item.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-              <a
-                href="#contact"
-                className="rounded-full bg-foreground px-5 py-2.5 text-xs font-semibold tracking-wide text-background transition-transform hover:scale-[1.02] sm:text-sm"
-              >
-                PARTNER WITH US
-              </a>
-            </nav>
-          </header>
-
-          {/* Bottom content */}
-          <section className="mt-auto px-4 pb-14 sm:px-8 sm:pb-20">
-            <div className="mx-auto max-w-7xl">
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-foreground/80 backdrop-blur">
-                <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--brand))]" />
-                Coming soon
-              </span>
-              <h1 className="mt-5 max-w-4xl text-5xl font-bold leading-[0.95] tracking-tight sm:text-6xl md:text-7xl lg:text-[5.5rem]">
-                SEE THE WORLD
-                <br />
-                THROUGH SOUND.
-              </h1>
-
-              <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+      {/* Fixed nav over the video */}
+      <header className="fixed inset-x-0 top-0 z-50 px-4 pt-5 sm:px-8 sm:pt-7">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur-xl sm:px-6 sm:py-3">
+          <a href="#" className="text-base font-semibold tracking-[0.2em]">
+            VISOREAD
+          </a>
+          <ul className="hidden items-center gap-8 md:flex">
+            {navItems.map((item) => (
+              <li key={item.label}>
                 <a
-                  href="#contact"
-                  className="inline-flex items-center justify-center rounded-full bg-foreground px-8 py-4 text-sm font-semibold tracking-wide text-background transition-transform hover:scale-[1.02] sm:text-base"
+                  href={item.href}
+                  className="text-sm text-foreground/80 transition-colors hover:text-foreground"
                 >
-                  CONTACT US
+                  {item.label}
                 </a>
-                <p className="text-sm leading-snug text-foreground/75">
-                  Voice-first AI glasses
-                  <br />
-                  built for the visually impaired
-                </p>
-              </div>
-            </div>
-          </section>
-        </div>
-      </section>
+              </li>
+            ))}
+          </ul>
+          <a
+            href="#contact"
+            className="rounded-full bg-foreground px-5 py-2.5 text-xs font-semibold tracking-wide text-background transition-transform hover:scale-[1.02] sm:text-sm"
+          >
+            PARTNER WITH US
+          </a>
+        </nav>
+      </header>
 
-      {/* ================= SCROLL VIDEO HERO ================= */}
-      <ScrollVideoHero />
+      {/* ================= SCROLL VIDEO HERO + FEATURES ================= */}
+      <ScrollVideoHero introVh={300}>
 
       {/* ================= FEATURES INTRO ================= */}
       <section id="features" className="relative px-4 pt-24 sm:px-8 sm:pt-32">
