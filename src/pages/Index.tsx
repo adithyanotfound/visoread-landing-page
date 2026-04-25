@@ -227,9 +227,6 @@ const Index = () => {
                     </div>
                   </div>
                   <div className="lg:hidden">
-                    <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium tracking-widest text-[hsl(var(--brand))] backdrop-blur">
-                      {eyebrow}
-                    </span>
                     <h3 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl">
                       {title}
                     </h3>
