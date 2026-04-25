@@ -14,42 +14,49 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useReveal } from "@/hooks/use-reveal";
 
 const navItems = [
   { label: "Features", href: "#features" },
   { label: "How It Works", href: "#how" },
-  { label: "About us", href: "#about" },
+  { label: "Our Motive", href: "#motive" },
   { label: "Contact", href: "#contact" },
 ];
 
 const features = [
   {
     icon: Mic,
+    eyebrow: "Feature 01",
     title: "AI Voice Assistant",
     body: "A built-in AI assistant handles everyday tasks — set reminders, ask questions, or get help on the go, all hands-free.",
   },
   {
     icon: ScanText,
+    eyebrow: "Feature 02",
     title: "Read Any Text Aloud",
     body: "Point your head, hear the page. VisoRead reads books, signs, menus and labels out loud in a natural voice.",
   },
   {
     icon: Banknote,
+    eyebrow: "Feature 03",
     title: "Currency Detection",
     body: "Instantly identifies notes and tells you the denomination so you always know what you're holding.",
   },
   {
     icon: FileText,
+    eyebrow: "Feature 04",
     title: "Smart Summaries",
     body: "Long documents become short, clear summaries — perfect for letters, articles and important paperwork.",
   },
   {
     icon: IndianRupee,
+    eyebrow: "Feature 05",
     title: "Voice-Powered UPI",
     body: "A first-of-its-kind voice UPI flow built for the visually impaired — send and receive money safely with just your voice.",
   },
   {
     icon: HandCoins,
+    eyebrow: "Feature 06",
     title: "Affordable by Design",
     body: "Built ground-up to be cost effective, so independence-enhancing tech is within reach for every household.",
   },
@@ -75,6 +82,7 @@ const steps = [
 
 const Index = () => {
   const [email, setEmail] = useState("");
+  useReveal();
 
   const handleContact = (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,7 +128,7 @@ const Index = () => {
                 href="#contact"
                 className="rounded-full bg-foreground px-5 py-2.5 text-xs font-semibold tracking-wide text-background transition-transform hover:scale-[1.02] sm:text-sm"
               >
-                GET VISOREAD
+                PARTNER WITH US
               </a>
             </nav>
           </header>
@@ -128,7 +136,11 @@ const Index = () => {
           {/* Bottom content */}
           <section className="mt-auto px-4 pb-14 sm:px-8 sm:pb-20">
             <div className="mx-auto max-w-7xl">
-              <h1 className="max-w-4xl text-5xl font-bold leading-[0.95] tracking-tight sm:text-6xl md:text-7xl lg:text-[5.5rem]">
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-foreground/80 backdrop-blur">
+                <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--brand))]" />
+                Coming soon
+              </span>
+              <h1 className="mt-5 max-w-4xl text-5xl font-bold leading-[0.95] tracking-tight sm:text-6xl md:text-7xl lg:text-[5.5rem]">
                 SEE THE WORLD
                 <br />
                 THROUGH SOUND.
@@ -139,7 +151,7 @@ const Index = () => {
                   href="#contact"
                   className="inline-flex items-center justify-center rounded-full bg-foreground px-8 py-4 text-sm font-semibold tracking-wide text-background transition-transform hover:scale-[1.02] sm:text-base"
                 >
-                  ORDER VISOREAD
+                  CONTACT US
                 </a>
                 <p className="text-sm leading-snug text-foreground/75">
                   Voice-first AI glasses
@@ -152,53 +164,78 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ================= FEATURES ================= */}
-      <section id="features" className="relative px-4 py-24 sm:px-8 sm:py-32">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col items-start gap-6 md:flex-row md:items-end md:justify-between">
-            <div className="max-w-2xl">
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-foreground/80 backdrop-blur">
-                <Sparkles className="h-3 w-3" /> Features
-              </span>
-              <h2 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
-                Everything you need.
-                <br />
-                Spoken, not seen.
-              </h2>
-            </div>
-            <p className="max-w-sm text-sm text-foreground/70">
-              VisoRead packs reading, money handling, and an AI assistant into a
-              pair of lightweight glasses — fully controlled by your voice.
-            </p>
+      {/* ================= FEATURES INTRO ================= */}
+      <section id="features" className="relative px-4 pt-24 sm:px-8 sm:pt-32">
+        <div className="mx-auto flex max-w-7xl flex-col items-start gap-6 md:flex-row md:items-end md:justify-between">
+          <div className="reveal max-w-2xl">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-foreground/80 backdrop-blur">
+              <Sparkles className="h-3 w-3" /> Features
+            </span>
+            <h2 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
+              Everything you need.
+              <br />
+              Spoken, not seen.
+            </h2>
           </div>
-
-          <div className="mt-16 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map(({ icon: Icon, title, body }) => (
-              <article
-                key={title}
-                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-7 backdrop-blur-md transition-colors hover:border-white/20 hover:bg-white/[0.06]"
-              >
-                <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-[hsl(var(--brand))]/10 blur-3xl transition-opacity group-hover:opacity-100 opacity-0" />
-                <span className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-[hsl(var(--brand))] text-[hsl(var(--brand-foreground))]">
-                  <Icon className="h-5 w-5" strokeWidth={2.2} />
-                </span>
-                <h3 className="relative mt-6 text-xl font-semibold tracking-tight">
-                  {title}
-                </h3>
-                <p className="relative mt-2 text-sm leading-relaxed text-foreground/70">
-                  {body}
-                </p>
-              </article>
-            ))}
-          </div>
+          <p className="reveal reveal-delay-1 max-w-sm text-sm text-foreground/70">
+            VisoRead packs reading, money handling, and an AI assistant into a
+            pair of lightweight glasses — fully controlled by your voice.
+          </p>
         </div>
       </section>
+
+      {/* ================= FEATURES — one per scroll ================= */}
+      {features.map(({ icon: Icon, eyebrow, title, body }, i) => (
+        <section
+          key={title}
+          className="relative flex min-h-screen items-center px-4 py-24 sm:px-8"
+        >
+          {/* ambient glow */}
+          <div
+            className={`pointer-events-none absolute inset-0 ${
+              i % 2 === 0
+                ? "bg-[radial-gradient(60%_50%_at_20%_50%,hsl(var(--brand))/0.10,transparent_70%)]"
+                : "bg-[radial-gradient(60%_50%_at_80%_50%,hsl(var(--brand))/0.10,transparent_70%)]"
+            }`}
+          />
+          <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-12 lg:grid-cols-2">
+            {/* text */}
+            <div className={i % 2 === 1 ? "lg:order-2" : ""}>
+              <span className="reveal inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium tracking-widest text-[hsl(var(--brand))] backdrop-blur">
+                {eyebrow}
+              </span>
+              <h3 className="reveal reveal-delay-1 mt-5 text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
+                {title}
+              </h3>
+              <p className="reveal reveal-delay-2 mt-6 max-w-xl text-base leading-relaxed text-foreground/70 sm:text-lg">
+                {body}
+              </p>
+            </div>
+
+            {/* visual card */}
+            <div className={i % 2 === 1 ? "lg:order-1" : ""}>
+              <div className="reveal reveal-delay-1 group relative aspect-square w-full overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] via-white/[0.02] to-[hsl(var(--brand))]/[0.08] p-10 backdrop-blur-md sm:p-14">
+                <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-[hsl(var(--brand))]/20 blur-3xl" />
+                <div className="absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-white/5 blur-3xl" />
+                <div className="relative flex h-full w-full flex-col justify-between">
+                  <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[hsl(var(--brand))] text-[hsl(var(--brand-foreground))] shadow-[0_20px_60px_-20px_hsl(var(--brand))]">
+                    <Icon className="h-7 w-7" strokeWidth={2.2} />
+                  </span>
+                  <div className="text-7xl font-bold tracking-tighter text-foreground/15 sm:text-8xl">
+                    {String(i + 1).padStart(2, "0")}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      ))}
 
       {/* ================= HOW IT WORKS ================= */}
       <section id="how" className="relative px-4 py-24 sm:px-8 sm:py-32">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[hsl(var(--brand))]/[0.05] to-transparent" />
         <div className="relative mx-auto max-w-7xl">
-          <div className="max-w-2xl">
+          <div className="reveal max-w-2xl">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-foreground/80 backdrop-blur">
               How it works
             </span>
@@ -210,8 +247,11 @@ const Index = () => {
           </div>
 
           <div className="mt-16 grid grid-cols-1 gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 md:grid-cols-3">
-            {steps.map((s) => (
-              <div key={s.n} className="bg-background p-8 sm:p-10">
+            {steps.map((s, i) => (
+              <div
+                key={s.n}
+                className={`reveal reveal-delay-${Math.min(i + 1, 3)} bg-background p-8 sm:p-10`}
+              >
                 <span className="text-sm font-semibold tracking-widest text-[hsl(var(--brand))]">
                   {s.n}
                 </span>
@@ -227,41 +267,63 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ================= ABOUT ================= */}
-      <section id="about" className="relative px-4 py-24 sm:px-8 sm:py-32">
-        <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-white/[0.04] p-8 backdrop-blur-md sm:p-14">
+      {/* ================= MOTIVE ================= */}
+      <section id="motive" className="relative px-4 py-24 sm:px-8 sm:py-32">
+        <div className="reveal mx-auto max-w-5xl rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] via-white/[0.02] to-[hsl(var(--brand))]/[0.10] p-8 backdrop-blur-md sm:p-14">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-foreground/80">
-            About us
+            Our Motive
           </span>
-          <h2 className="mt-6 text-3xl font-bold leading-tight tracking-tight sm:text-4xl md:text-5xl">
-            Independence shouldn't be a luxury.
+          <h2 className="mt-6 text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
+            Affordable.
+            <br />
+            For everyone.
           </h2>
-          <p className="mt-6 max-w-3xl text-base leading-relaxed text-foreground/75 sm:text-lg">
-            We're building VisoRead for one simple reason: assistive technology
-            is too expensive for the people who need it most. By combining an
-            AI voice assistant, on-device reading, currency detection and a
-            first-of-its-kind voice UPI flow into a single affordable pair of
-            glasses, we put true independence within reach for every household.
-          </p>
+          <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+              <div className="text-3xl font-bold text-[hsl(var(--brand))]">
+                1/10th
+              </div>
+              <p className="mt-2 text-sm text-foreground/70">
+                the cost of existing assistive smart glasses.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+              <div className="text-3xl font-bold text-[hsl(var(--brand))]">
+                100%
+              </div>
+              <p className="mt-2 text-sm text-foreground/70">
+                voice-controlled — no screen, no learning curve.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+              <div className="text-3xl font-bold text-[hsl(var(--brand))]">
+                Every home
+              </div>
+              <p className="mt-2 text-sm text-foreground/70">
+                independence shouldn't be a luxury good.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* ================= CONTACT ================= */}
       <section id="contact" className="relative px-4 pb-24 pt-8 sm:px-8 sm:pb-32">
-        <div className="mx-auto max-w-7xl overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-[hsl(var(--brand))]/[0.08] p-8 backdrop-blur-md sm:p-14">
+        <div className="reveal mx-auto max-w-7xl overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-[hsl(var(--brand))]/[0.08] p-8 backdrop-blur-md sm:p-14">
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-foreground/80">
-                Contact
+                Investors & Partners
               </span>
               <h2 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
-                Bring VisoRead
+                Help us bring
                 <br />
-                to someone you love.
+                VisoRead to life.
               </h2>
               <p className="mt-6 max-w-md text-sm leading-relaxed text-foreground/70">
-                Drop your email and we'll reach out with availability, pricing
-                and a personal walkthrough.
+                VisoRead is launching soon. We're talking to investors, NGOs and
+                organisations who want to make affordable assistive tech a
+                reality. Reach out — we'd love to hear from you.
               </p>
 
               <ul className="mt-10 space-y-4 text-sm text-foreground/80">
@@ -291,11 +353,11 @@ const Index = () => {
               className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-black/30 p-6 backdrop-blur-md sm:p-8"
             >
               <label className="text-xs font-medium uppercase tracking-widest text-foreground/60">
-                Name
+                Name / Organisation
               </label>
               <input
                 type="text"
-                placeholder="Your full name"
+                placeholder="Your name or company"
                 className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-foreground placeholder:text-foreground/40 focus:border-white/30 focus:outline-none"
               />
 
@@ -316,7 +378,7 @@ const Index = () => {
               </label>
               <textarea
                 rows={4}
-                placeholder="Tell us a bit about who VisoRead is for…"
+                placeholder="Tell us how you'd like to partner with VisoRead…"
                 className="resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-foreground placeholder:text-foreground/40 focus:border-white/30 focus:outline-none"
               />
 
