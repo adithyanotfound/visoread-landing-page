@@ -110,7 +110,12 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background-color: hsl(var(--background));
+  }
+
+  html {
+    background-color: hsl(var(--background));
   }
 }
 
