@@ -190,7 +190,7 @@ const Index = () => {
       {features.map(({ icon: Icon, eyebrow, title, body }, i) => (
         <section
           key={title}
-          className="relative flex min-h-screen items-center px-4 py-24 sm:px-8"
+          className="relative flex min-h-screen items-center px-4 py-20 sm:px-8 sm:py-24"
         >
           {/* ambient glow */}
           <div
@@ -200,9 +200,8 @@ const Index = () => {
                 : "bg-[radial-gradient(60%_50%_at_80%_50%,hsl(var(--brand))/0.10,transparent_70%)]"
             }`}
           />
-          <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-12 lg:grid-cols-2">
-            {/* text */}
-            <div className={i % 2 === 1 ? "lg:order-2" : ""}>
+          <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-12">
+            <div className={`hidden lg:block ${i % 2 === 1 ? "lg:order-2" : ""}`}>
               <span className="reveal inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium tracking-widest text-[hsl(var(--brand))] backdrop-blur">
                 {eyebrow}
               </span>
@@ -214,15 +213,30 @@ const Index = () => {
               </p>
             </div>
 
-            {/* visual card */}
             <div className={i % 2 === 1 ? "lg:order-1" : ""}>
-              <div className="reveal reveal-delay-1 group relative aspect-square w-full overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] via-white/[0.02] to-[hsl(var(--brand))]/[0.08] p-10 backdrop-blur-md sm:p-14">
+              <div className="reveal reveal-delay-1 group relative flex min-h-[520px] w-full overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] via-white/[0.02] to-[hsl(var(--brand))]/[0.08] p-7 backdrop-blur-md sm:min-h-[560px] sm:p-10 lg:aspect-square lg:min-h-0 lg:p-14">
                 <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-[hsl(var(--brand))]/20 blur-3xl" />
                 <div className="absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-white/5 blur-3xl" />
                 <div className="relative flex h-full w-full flex-col justify-between">
-                  <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[hsl(var(--brand))] text-[hsl(var(--brand-foreground))] shadow-[0_20px_60px_-20px_hsl(var(--brand))]">
-                    <Icon className="h-7 w-7" strokeWidth={2.2} />
-                  </span>
+                  <div className="flex items-start justify-between gap-4">
+                    <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[hsl(var(--brand))] text-[hsl(var(--brand-foreground))] shadow-[0_20px_60px_-20px_hsl(var(--brand))]">
+                      <Icon className="h-7 w-7" strokeWidth={2.2} />
+                    </span>
+                    <div className="text-6xl font-bold tracking-tighter text-foreground/15 sm:text-7xl lg:hidden">
+                      {String(i + 1).padStart(2, "0")}
+                    </div>
+                  </div>
+                  <div className="lg:hidden">
+                    <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium tracking-widest text-[hsl(var(--brand))] backdrop-blur">
+                      {eyebrow}
+                    </span>
+                    <h3 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl">
+                      {title}
+                    </h3>
+                    <p className="mt-5 max-w-xl text-base leading-relaxed text-foreground/70 sm:text-lg">
+                      {body}
+                    </p>
+                  </div>
                   <div className="text-7xl font-bold tracking-tighter text-foreground/15 sm:text-8xl">
                     {String(i + 1).padStart(2, "0")}
                   </div>
