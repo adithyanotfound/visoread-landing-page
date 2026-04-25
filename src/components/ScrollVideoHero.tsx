@@ -3,8 +3,8 @@ import { motion, useScroll, useTransform } from "framer-motion";
 
 interface ScrollVideoHeroProps {
   children?: ReactNode;
-  /** Total scroll length as a multiplier of viewport height. */
-  scrollVh?: number;
+  /** Extra scroll length (in vh) for the intro before children begin. */
+  introVh?: number;
 }
 
 const introSections = [
