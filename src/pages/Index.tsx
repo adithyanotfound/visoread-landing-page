@@ -120,7 +120,7 @@ const Index = () => {
       </header>
 
       {/* ================= HERO ================= */}
-      <section className="relative min-h-screen overflow-hidden">
+      <section className="relative z-10 min-h-screen overflow-hidden bg-background">
         <img
           src={heroImg}
           alt="Person wearing VisoRead smart glasses"
