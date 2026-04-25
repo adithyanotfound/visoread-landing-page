@@ -7,16 +7,6 @@ const sections = [
     title: "Hear the world,\nin real time.",
     body: "VisoRead reads what's in front of you — books, signs, menus, paperwork — out loud, instantly.",
   },
-  {
-    eyebrow: "Independent",
-    title: "Money, handled\nby your voice.",
-    body: "Identify currency notes and pay over UPI — all hands-free, all spoken.",
-  },
-  {
-    eyebrow: "For everyone",
-    title: "Affordable\nby design.",
-    body: "Built ground-up to put assistive tech within reach for every household.",
-  },
 ];
 
 const ScrollVideoHero = ({ children }: PropsWithChildren) => {
@@ -44,25 +34,19 @@ const ScrollVideoHero = ({ children }: PropsWithChildren) => {
   // Video fades in as soon as the user starts scrolling out of the hero.
   const videoOpacity = useTransform(scrollYProgress, [0, 0.05, 0.15], [0, 0.5, 1]);
 
-  const firstOpacity = useTransform(storyProgress, [0.0, 0.08, 0.22, 0.32], [0, 1, 1, 0]);
-  const secondOpacity = useTransform(storyProgress, [0.34, 0.42, 0.55, 0.65], [0, 1, 1, 0]);
-  const thirdOpacity = useTransform(storyProgress, [0.66, 0.74, 0.88, 0.98], [0, 1, 1, 0]);
-  const firstY = useTransform(storyProgress, [0.0, 0.08, 0.22, 0.32], [40, 0, 0, -40]);
-  const secondY = useTransform(storyProgress, [0.34, 0.42, 0.55, 0.65], [40, 0, 0, -40]);
-  const thirdY = useTransform(storyProgress, [0.66, 0.74, 0.88, 0.98], [40, 0, 0, -40]);
-  const firstBlur = useTransform(storyProgress, [0.0, 0.08, 0.22, 0.32], ["8px", "0px", "0px", "8px"]);
-  const secondBlur = useTransform(storyProgress, [0.34, 0.42, 0.55, 0.65], ["8px", "0px", "0px", "8px"]);
-  const thirdBlur = useTransform(storyProgress, [0.66, 0.74, 0.88, 0.98], ["8px", "0px", "0px", "8px"]);
-  const opacities = [firstOpacity, secondOpacity, thirdOpacity];
-  const ys = [firstY, secondY, thirdY];
-  const blurs = [firstBlur, secondBlur, thirdBlur];
+  const firstOpacity = useTransform(storyProgress, [0.0, 0.1, 0.75, 0.95], [0, 1, 1, 0]);
+  const firstY = useTransform(storyProgress, [0.0, 0.1, 0.75, 0.95], [40, 0, 0, -40]);
+  const firstBlur = useTransform(storyProgress, [0.0, 0.1, 0.75, 0.95], ["8px", "0px", "0px", "8px"]);
+  const opacities = [firstOpacity];
+  const ys = [firstY];
+  const blurs = [firstBlur];
 
   // Drive video.currentTime from scroll using a smooth rAF lerp loop.
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    const lerpFactor = 0.12;
+    const lerpFactor = 0.25;
 
     const markReady = () => {
       if (!video.duration || isNaN(video.duration) || video.duration === Infinity) return;
@@ -201,7 +185,7 @@ const ScrollVideoHero = ({ children }: PropsWithChildren) => {
 
         {/* Story spacer + the rest of the page content layered on top of the fixed video */}
         <div className="relative z-10 -mt-[100vh]">
-          <div ref={storyRef} className="h-[300vh]" />
+          <div ref={storyRef} className="h-[150vh]" />
           {children}
         </div>
       </section>

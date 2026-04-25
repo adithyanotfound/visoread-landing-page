@@ -4,18 +4,17 @@ import {
   ScanText,
   Banknote,
   FileText,
-  IndianRupee,
-  HandCoins,
   Sparkles,
   Mail,
   Phone,
   MapPin,
   ArrowRight,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { useReveal } from "@/hooks/use-reveal";
-import ScrollVideoHero from "@/components/ScrollVideoHero";
+import LoadingScreen from "@/components/LoadingScreen";
+
 
 const navItems = [
   { label: "Features", href: "#features" },
@@ -48,18 +47,6 @@ const features = [
     title: "Smart Summaries",
     body: "Long documents become short, clear summaries — perfect for letters, articles and important paperwork.",
   },
-  {
-    icon: IndianRupee,
-    eyebrow: "Feature 05",
-    title: "Voice-Powered UPI",
-    body: "A first-of-its-kind voice UPI flow built for the visually impaired — send and receive money safely with just your voice.",
-  },
-  {
-    icon: HandCoins,
-    eyebrow: "Feature 06",
-    title: "Affordable by Design",
-    body: "Built ground-up to be cost effective, so independence-enhancing tech is within reach for every household.",
-  },
 ];
 
 const steps = [
@@ -84,6 +71,106 @@ const Index = () => {
   const [email, setEmail] = useState("");
   useReveal();
 
+  // ── Loading gate ─────────────────────────────────────────────────────────
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [heroLoaded, setHeroLoaded] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+
+  // Open the gate when both assets have signalled ready
+  useEffect(() => {
+    if (videoLoaded && heroLoaded) {
+      const t = setTimeout(() => setIsReady(true), 200);
+      return () => clearTimeout(t);
+    }
+  }, [videoLoaded, heroLoaded]);
+
+  // Fallback: never leave users stuck — reveal after 6 s regardless
+  useEffect(() => {
+    const t = setTimeout(() => setIsReady(true), 6000);
+    return () => clearTimeout(t);
+  }, []);
+
+  // ── Scroll-driven video scrub ────────────────────────────────────────────
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const currentTimeRef = useRef(0);
+  const targetTimeRef = useRef(0);
+  const durationRef = useRef(0);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = "auto";
+    video.pause();
+
+    const getScrollFraction = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      return scrollable > 0 ? Math.min(Math.max(window.scrollY / scrollable, 0), 1) : 0;
+    };
+
+    const markReady = () => {
+      if (!video.duration || isNaN(video.duration)) return;
+      durationRef.current = video.duration;
+      const t = getScrollFraction() * durationRef.current;
+      targetTimeRef.current = t;
+      currentTimeRef.current = t;
+      try { video.currentTime = t; } catch { /* ignore */ }
+      setVideoLoaded(true); // signal the loading gate
+    };
+
+    video.addEventListener("loadedmetadata", markReady);
+    video.addEventListener("loadeddata", markReady);
+    video.addEventListener("canplay", markReady);
+    if (video.readyState >= 1) markReady();
+
+    const onScroll = () => {
+      if (!durationRef.current) return;
+      targetTimeRef.current = getScrollFraction() * durationRef.current;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    // Hybrid approach: direct jump for fast scroll, smooth step for slow scroll.
+    // Crucially, we only call video.currentTime when NOT already seeking to
+    // prevent seek-queue buildup — the #1 source of HTML5 video scrub lag.
+    const tick = () => {
+      if (durationRef.current) {
+        const diff = targetTimeRef.current - currentTimeRef.current;
+        const absDiff = Math.abs(diff);
+
+        if (absDiff > 0.5) {
+          // Fast scroll — snap directly so the video keeps up
+          currentTimeRef.current = targetTimeRef.current;
+        } else if (absDiff > 0.016) {
+          // Slow scroll — smooth lerp (0.35 ≈ ~3 frames to settle)
+          currentTimeRef.current += diff * 0.35;
+        }
+
+        // Only seek when the browser isn't mid-seek; prevents queue buildup
+        if (!video.seeking && absDiff > 0.016) {
+          try {
+            video.currentTime = Math.min(
+              Math.max(currentTimeRef.current, 0),
+              durationRef.current,
+            );
+          } catch { /* ignore seek errors */ }
+        }
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      video.removeEventListener("loadedmetadata", markReady);
+      video.removeEventListener("loadeddata", markReady);
+      video.removeEventListener("canplay", markReady);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
   const handleContact = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
@@ -93,6 +180,19 @@ const Index = () => {
 
   return (
     <main className="min-h-screen text-foreground">
+      <LoadingScreen isReady={isReady} />
+      {/* ================= FIXED BACKGROUND VIDEO ================= */}
+      <video
+        ref={videoRef}
+        src="/visoread-hero.mp4"
+        muted
+        playsInline
+        preload="auto"
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 z-0 h-screen w-screen object-cover scale-[1.2] origin-center"
+      />
+      {/* Subtle dark scrim so text stays readable everywhere */}
+      <div className="pointer-events-none fixed inset-0 z-[1] bg-background/65" />
       <header className="fixed left-0 right-0 top-0 z-50 px-4 pt-5 sm:px-8 sm:pt-7">
         <nav className="mx-auto flex max-w-7xl items-center justify-between rounded-full border border-white/10 bg-background/45 px-4 py-2 shadow-[0_24px_80px_-36px_hsl(var(--foreground)/0.35)] backdrop-blur-xl sm:px-6 sm:py-3">
           <a href="#" className="text-base font-semibold tracking-[0.2em]">
@@ -126,6 +226,7 @@ const Index = () => {
           alt="Person wearing VisoRead smart glasses"
           width={1920}
           height={1080}
+          onLoad={() => setHeroLoaded(true)}
           className="absolute inset-0 h-full w-full object-cover object-center opacity-90"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black" />
@@ -163,11 +264,27 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ================= SCROLL VIDEO HERO ================= */}
-      <ScrollVideoHero>
+      {/* ================= HEAR THE WORLD SECTION ================= */}
+      <section className="relative z-10 flex min-h-screen items-center px-4 sm:px-8">
+        <div className="mx-auto w-full max-w-7xl">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium tracking-widest text-foreground/80 backdrop-blur">
+            <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--brand))]" />
+            Voice-first
+          </span>
+          <h2 className="mt-5 max-w-4xl text-5xl font-bold leading-[0.95] tracking-tight sm:text-6xl md:text-7xl lg:text-[5.5rem]">
+            Hear the world,
+            <br />
+            in real time.
+          </h2>
+          <p className="mt-6 max-w-md text-base leading-relaxed text-foreground/75 sm:text-lg">
+            VisoRead reads what&apos;s in front of you — books, signs, menus,
+            paperwork — out loud, instantly.
+          </p>
+        </div>
+      </section>
 
       {/* ================= FEATURES INTRO ================= */}
-      <section id="features" className="relative px-4 pt-24 sm:px-8 sm:pt-32">
+      <section id="features" className="relative z-10 px-4 pt-24 sm:px-8 sm:pt-32">
         <div className="mx-auto flex max-w-7xl flex-col items-start gap-6 md:flex-row md:items-end md:justify-between">
           <div className="reveal max-w-2xl">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-foreground/80 backdrop-blur">
@@ -190,7 +307,7 @@ const Index = () => {
       {features.map(({ icon: Icon, eyebrow, title, body }, i) => (
         <section
           key={title}
-          className="relative flex min-h-screen items-center px-4 py-20 sm:px-8 sm:py-24"
+          className="relative z-10 flex min-h-screen items-center px-4 py-20 sm:px-8 sm:py-24"
         >
           {/* ambient glow */}
           <div
@@ -245,7 +362,7 @@ const Index = () => {
       ))}
 
       {/* ================= HOW IT WORKS ================= */}
-      <section id="how" className="relative px-4 py-24 sm:px-8 sm:py-32">
+      <section id="how" className="relative z-10 px-4 py-24 sm:px-8 sm:py-32">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[hsl(var(--brand))]/[0.05] to-transparent" />
         <div className="relative mx-auto max-w-7xl">
           <div className="reveal max-w-2xl">
@@ -263,7 +380,7 @@ const Index = () => {
             {steps.map((s, i) => (
               <div
                 key={s.n}
-                className={`reveal reveal-delay-${Math.min(i + 1, 3)} bg-background p-8 sm:p-10`}
+                className={`reveal reveal-delay-${Math.min(i + 1, 3)} bg-gradient-to-br from-white/[0.06] via-white/[0.02] to-[hsl(var(--brand))]/[0.08] backdrop-blur-md p-8 sm:p-10`}
               >
                 <span className="text-sm font-semibold tracking-widest text-[hsl(var(--brand))]">
                   {s.n}
@@ -281,7 +398,7 @@ const Index = () => {
       </section>
 
       {/* ================= CONTACT ================= */}
-      <section id="contact" className="relative px-4 pb-24 pt-8 sm:px-8 sm:pb-32">
+      <section id="contact" className="relative z-10 px-4 pb-24 pt-8 sm:px-8 sm:pb-32">
         <div className="reveal mx-auto max-w-7xl overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-[hsl(var(--brand))]/[0.08] p-8 backdrop-blur-md sm:p-14">
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
             <div>
@@ -370,7 +487,7 @@ const Index = () => {
           <span>© {new Date().getFullYear()} VisoRead. Built with care.</span>
         </footer>
       </section>
-      </ScrollVideoHero>
+
     </main>
   );
 };
