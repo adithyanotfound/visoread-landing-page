@@ -411,7 +411,7 @@ const Index = () => {
                     </div>
                   </div>
                   {/* Dynamic Visual Centerpiece */}
-                  <div className="absolute inset-0 z-0 flex items-center justify-center p-8 pointer-events-none">
+                  <div className="absolute inset-0 z-0 hidden items-center justify-center p-8 pointer-events-none lg:flex">
                     <FeatureVisual index={i} />
                   </div>
 
