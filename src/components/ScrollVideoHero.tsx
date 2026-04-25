@@ -188,8 +188,8 @@ const ScrollVideoHero = ({ children, introVh = 400 }: ScrollVideoHeroProps) => {
         </motion.div>
       </div>
 
-      {/* Spacer for the intro text scroll length (intro plays before children appear) */}
-      <div aria-hidden style={{ height: `${introVh}vh` }} className="-mt-[100vh]" />
+      {/* Spacer adds intro scroll length so the 3 intro texts can play before children arrive */}
+      <div aria-hidden style={{ height: `${introVh}vh`, marginTop: "-100vh" }} />
 
       {/* Children scroll over the still-sticky video */}
       {children ? <div className="relative z-20">{children}</div> : null}
