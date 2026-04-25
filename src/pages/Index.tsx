@@ -92,7 +92,7 @@ const Index = () => {
   };
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="min-h-screen text-foreground">
       <header className="fixed left-0 right-0 top-0 z-50 px-4 pt-5 sm:px-8 sm:pt-7">
         <nav className="mx-auto flex max-w-7xl items-center justify-between rounded-full border border-white/10 bg-background/45 px-4 py-2 shadow-[0_24px_80px_-36px_hsl(var(--foreground)/0.35)] backdrop-blur-xl sm:px-6 sm:py-3">
           <a href="#" className="text-base font-semibold tracking-[0.2em]">
@@ -120,7 +120,7 @@ const Index = () => {
       </header>
 
       {/* ================= HERO ================= */}
-      <section className="relative min-h-screen overflow-hidden">
+      <section className="relative z-10 min-h-screen overflow-hidden bg-background">
         <img
           src={heroImg}
           alt="Person wearing VisoRead smart glasses"
