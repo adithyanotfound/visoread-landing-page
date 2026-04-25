@@ -15,6 +15,7 @@ import {
 import { useState } from "react";
 import { toast } from "sonner";
 import { useReveal } from "@/hooks/use-reveal";
+import ScrollVideoHero from "@/components/ScrollVideoHero";
 
 const navItems = [
   { label: "Features", href: "#features" },
@@ -163,6 +164,9 @@ const Index = () => {
           </section>
         </div>
       </section>
+
+      {/* ================= SCROLL VIDEO HERO ================= */}
+      <ScrollVideoHero />
 
       {/* ================= FEATURES INTRO ================= */}
       <section id="features" className="relative px-4 pt-24 sm:px-8 sm:pt-32">
