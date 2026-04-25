@@ -1,4 +1,4 @@
-import heroImg from "@/assets/hero-glasses.jpg";
+import heroImg from "@/assets/visoread-hero-bg.png";
 import {
   Mic,
   ScanText,
@@ -20,7 +20,6 @@ import ScrollVideoHero from "@/components/ScrollVideoHero";
 const navItems = [
   { label: "Features", href: "#features" },
   { label: "How It Works", href: "#how" },
-  { label: "Our Motive", href: "#motive" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -94,6 +93,32 @@ const Index = () => {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
+      <header className="fixed left-0 right-0 top-0 z-50 px-4 pt-5 sm:px-8 sm:pt-7">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between rounded-full border border-white/10 bg-background/45 px-4 py-2 shadow-[0_24px_80px_-36px_hsl(var(--foreground)/0.35)] backdrop-blur-xl sm:px-6 sm:py-3">
+          <a href="#" className="text-base font-semibold tracking-[0.2em]">
+            VISOREAD
+          </a>
+          <ul className="hidden items-center gap-8 md:flex">
+            {navItems.map((item) => (
+              <li key={item.label}>
+                <a
+                  href={item.href}
+                  className="text-sm text-foreground/80 transition-colors hover:text-foreground"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a
+            href="#contact"
+            className="rounded-full bg-foreground px-5 py-2.5 text-xs font-semibold tracking-wide text-background transition-transform hover:scale-[1.02] sm:text-sm"
+          >
+            PARTNER WITH US
+          </a>
+        </nav>
+      </header>
+
       {/* ================= HERO ================= */}
       <section className="relative min-h-screen overflow-hidden">
         <img
@@ -107,33 +132,6 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/40" />
 
         <div className="relative z-10 flex min-h-screen flex-col">
-          {/* Nav */}
-          <header className="px-4 pt-5 sm:px-8 sm:pt-7">
-            <nav className="mx-auto flex max-w-7xl items-center justify-between rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur-xl sm:px-6 sm:py-3">
-              <a href="#" className="text-base font-semibold tracking-[0.2em]">
-                VISOREAD
-              </a>
-              <ul className="hidden items-center gap-8 md:flex">
-                {navItems.map((item) => (
-                  <li key={item.label}>
-                    <a
-                      href={item.href}
-                      className="text-sm text-foreground/80 transition-colors hover:text-foreground"
-                    >
-                      {item.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-              <a
-                href="#contact"
-                className="rounded-full bg-foreground px-5 py-2.5 text-xs font-semibold tracking-wide text-background transition-transform hover:scale-[1.02] sm:text-sm"
-              >
-                PARTNER WITH US
-              </a>
-            </nav>
-          </header>
-
           {/* Bottom content */}
           <section className="mt-auto px-4 pb-14 sm:px-8 sm:pb-20">
             <div className="mx-auto max-w-7xl">
@@ -192,7 +190,7 @@ const Index = () => {
       {features.map(({ icon: Icon, eyebrow, title, body }, i) => (
         <section
           key={title}
-          className="relative flex min-h-screen items-center px-4 py-24 sm:px-8"
+          className="relative flex min-h-screen items-center px-4 py-20 sm:px-8 sm:py-24"
         >
           {/* ambient glow */}
           <div
@@ -202,9 +200,8 @@ const Index = () => {
                 : "bg-[radial-gradient(60%_50%_at_80%_50%,hsl(var(--brand))/0.10,transparent_70%)]"
             }`}
           />
-          <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-12 lg:grid-cols-2">
-            {/* text */}
-            <div className={i % 2 === 1 ? "lg:order-2" : ""}>
+          <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-12">
+            <div className={`hidden lg:block ${i % 2 === 1 ? "lg:order-2" : ""}`}>
               <span className="reveal inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium tracking-widest text-[hsl(var(--brand))] backdrop-blur">
                 {eyebrow}
               </span>
@@ -216,16 +213,31 @@ const Index = () => {
               </p>
             </div>
 
-            {/* visual card */}
             <div className={i % 2 === 1 ? "lg:order-1" : ""}>
-              <div className="reveal reveal-delay-1 group relative aspect-square w-full overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] via-white/[0.02] to-[hsl(var(--brand))]/[0.08] p-10 backdrop-blur-md sm:p-14">
+              <div className="reveal reveal-delay-1 group relative flex min-h-[520px] w-full overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] via-white/[0.02] to-[hsl(var(--brand))]/[0.08] p-7 backdrop-blur-md sm:min-h-[560px] sm:p-10 lg:aspect-square lg:min-h-0 lg:p-14">
                 <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-[hsl(var(--brand))]/20 blur-3xl" />
                 <div className="absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-white/5 blur-3xl" />
                 <div className="relative flex h-full w-full flex-col justify-between">
-                  <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[hsl(var(--brand))] text-[hsl(var(--brand-foreground))] shadow-[0_20px_60px_-20px_hsl(var(--brand))]">
-                    <Icon className="h-7 w-7" strokeWidth={2.2} />
-                  </span>
-                  <div className="text-7xl font-bold tracking-tighter text-foreground/15 sm:text-8xl">
+                  <div className="flex items-start justify-between gap-4">
+                    <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[hsl(var(--brand))] text-[hsl(var(--brand-foreground))] shadow-[0_20px_60px_-20px_hsl(var(--brand))]">
+                      <Icon className="h-7 w-7" strokeWidth={2.2} />
+                    </span>
+                    <div className="text-6xl font-bold tracking-tighter text-foreground/15 sm:text-7xl lg:hidden">
+                      {String(i + 1).padStart(2, "0")}
+                    </div>
+                  </div>
+                  <div className="lg:hidden">
+                    <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium tracking-widest text-[hsl(var(--brand))] backdrop-blur">
+                      {eyebrow}
+                    </span>
+                    <h3 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl">
+                      {title}
+                    </h3>
+                    <p className="mt-5 max-w-xl text-base leading-relaxed text-foreground/70 sm:text-lg">
+                      {body}
+                    </p>
+                  </div>
+                  <div className="hidden text-7xl font-bold tracking-tighter text-foreground/15 sm:text-8xl lg:block">
                     {String(i + 1).padStart(2, "0")}
                   </div>
                 </div>
@@ -267,46 +279,6 @@ const Index = () => {
                 </p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ================= MOTIVE ================= */}
-      <section id="motive" className="relative px-4 py-24 sm:px-8 sm:py-32">
-        <div className="reveal mx-auto max-w-5xl rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] via-white/[0.02] to-[hsl(var(--brand))]/[0.10] p-8 backdrop-blur-md sm:p-14">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-foreground/80">
-            Our Motive
-          </span>
-          <h2 className="mt-6 text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
-            Affordable.
-            <br />
-            For everyone.
-          </h2>
-          <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-              <div className="text-3xl font-bold text-[hsl(var(--brand))]">
-                1/10th
-              </div>
-              <p className="mt-2 text-sm text-foreground/70">
-                the cost of existing assistive smart glasses.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-              <div className="text-3xl font-bold text-[hsl(var(--brand))]">
-                100%
-              </div>
-              <p className="mt-2 text-sm text-foreground/70">
-                voice-controlled — no screen, no learning curve.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-              <div className="text-3xl font-bold text-[hsl(var(--brand))]">
-                Every home
-              </div>
-              <p className="mt-2 text-sm text-foreground/70">
-                independence shouldn't be a luxury good.
-              </p>
-            </div>
           </div>
         </div>
       </section>

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 const sections = [
@@ -25,27 +25,70 @@ const ScrollVideoHero = () => {
   const currentTimeRef = useRef(0);
   const targetTimeRef = useRef(0);
   const rafRef = useRef<number | null>(null);
+  const durationRef = useRef(0);
 
   const { scrollYProgress } = useScroll({
     target: targetRef,
     offset: ["start start", "end end"],
   });
 
+  const sectionRanges = useMemo<Array<[number, number, number, number]>>(
+    () => [
+      [0.0, 0.08, 0.22, 0.32],
+      [0.34, 0.42, 0.55, 0.65],
+      [0.66, 0.74, 0.88, 0.98],
+    ],
+    [],
+  );
+
+  const firstOpacity = useTransform(scrollYProgress, sectionRanges[0], [0, 1, 1, 0]);
+  const secondOpacity = useTransform(scrollYProgress, sectionRanges[1], [0, 1, 1, 0]);
+  const thirdOpacity = useTransform(scrollYProgress, sectionRanges[2], [0, 1, 1, 0]);
+  const firstY = useTransform(scrollYProgress, sectionRanges[0], [40, 0, 0, -40]);
+  const secondY = useTransform(scrollYProgress, sectionRanges[1], [40, 0, 0, -40]);
+  const thirdY = useTransform(scrollYProgress, sectionRanges[2], [40, 0, 0, -40]);
+  const firstBlur = useTransform(scrollYProgress, sectionRanges[0], ["8px", "0px", "0px", "8px"]);
+  const secondBlur = useTransform(scrollYProgress, sectionRanges[1], ["8px", "0px", "0px", "8px"]);
+  const thirdBlur = useTransform(scrollYProgress, sectionRanges[2], ["8px", "0px", "0px", "8px"]);
+  const opacities = [firstOpacity, secondOpacity, thirdOpacity];
+  const ys = [firstY, secondY, thirdY];
+  const blurs = [firstBlur, secondBlur, thirdBlur];
+
   // Drive the video currentTime from scroll, smoothed with lerp.
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    const lerpFactor = 0.1;
+    const lerpFactor = 0.12;
+
+    const syncTargetTime = () => {
+      if (!durationRef.current) return;
+      targetTimeRef.current = scrollYProgress.get() * durationRef.current;
+    };
+
+    const handleLoadedMetadata = () => {
+      durationRef.current = video.duration || 0;
+      currentTimeRef.current = 0;
+      syncTargetTime();
+      video.pause();
+    };
+
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = "auto";
+    video.load();
+
+    if (video.readyState >= 1) handleLoadedMetadata();
+    video.addEventListener("loadedmetadata", handleLoadedMetadata);
 
     const tick = () => {
       const diff = targetTimeRef.current - currentTimeRef.current;
       currentTimeRef.current += diff * lerpFactor;
-      if (video.duration && !Number.isNaN(video.duration)) {
+      if (durationRef.current) {
         try {
           video.currentTime = Math.min(
             Math.max(currentTimeRef.current, 0),
-            video.duration - 0.001,
+            durationRef.current - 0.001,
           );
         } catch {
           /* ignore seek errors */
@@ -55,8 +98,8 @@ const ScrollVideoHero = () => {
     };
 
     const unsubscribe = scrollYProgress.on("change", (p) => {
-      if (video.duration) {
-        targetTimeRef.current = p * video.duration;
+      if (durationRef.current) {
+        targetTimeRef.current = p * durationRef.current;
       }
     });
 
@@ -64,30 +107,10 @@ const ScrollVideoHero = () => {
 
     return () => {
       unsubscribe();
+      video.removeEventListener("loadedmetadata", handleLoadedMetadata);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, [scrollYProgress]);
-
-  // Per-section transforms (3 sections evenly spread across scroll progress).
-  const sectionRanges: Array<[number, number, number, number]> = [
-    [0.0, 0.08, 0.22, 0.32],
-    [0.34, 0.42, 0.55, 0.65],
-    [0.66, 0.74, 0.88, 0.98],
-  ];
-
-  const opacities = sectionRanges.map(([a, b, c, d]) =>
-    useTransform(scrollYProgress, [a, b, c, d], [0, 1, 1, 0]),
-  );
-  const ys = sectionRanges.map(([a, b, c, d]) =>
-    useTransform(scrollYProgress, [a, b, c, d], [40, 0, 0, -40]),
-  );
-  const blurs = sectionRanges.map(([a, b, c, d]) =>
-    useTransform(
-      scrollYProgress,
-      [a, b, c, d],
-      ["8px", "0px", "0px", "8px"],
-    ),
-  );
 
   const indicatorOpacity = useTransform(scrollYProgress, [0, 0.05], [1, 0]);
 
