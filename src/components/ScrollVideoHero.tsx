@@ -141,12 +141,12 @@ const ScrollVideoHero = ({ children }: PropsWithChildren) => {
         preload="auto"
         aria-hidden="true"
         style={{ opacity: videoReady ? videoOpacity : 0 }}
-        className="pointer-events-none fixed inset-0 -z-10 h-screen w-screen object-cover"
+        className="pointer-events-none fixed inset-0 z-0 h-screen w-screen object-cover"
       />
       {/* Dark overlay on the video */}
       <motion.div
         style={{ opacity: videoOpacity }}
-        className="pointer-events-none fixed inset-0 -z-10 bg-background/50"
+        className="pointer-events-none fixed inset-0 z-0 bg-background/50"
       />
 
       <section ref={targetRef} className="relative w-full">
