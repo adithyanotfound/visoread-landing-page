@@ -1,4 +1,3 @@
-import heroImg from "@/assets/hero-glasses.jpg";
 import {
   Mic,
   ScanText,
