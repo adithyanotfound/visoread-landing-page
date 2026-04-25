@@ -1,7 +1,13 @@
-import { useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
-const sections = [
+interface ScrollVideoHeroProps {
+  children?: ReactNode;
+  /** Total scroll length as a multiplier of viewport height. */
+  scrollVh?: number;
+}
+
+const introSections = [
   {
     eyebrow: "Voice-first",
     title: "Hear the world,\nin real time.",
@@ -19,44 +25,77 @@ const sections = [
   },
 ];
 
-const ScrollVideoHero = () => {
+const ScrollVideoHero = ({ children, scrollVh = 600 }: ScrollVideoHeroProps) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const currentTimeRef = useRef(0);
   const targetTimeRef = useRef(0);
   const rafRef = useRef<number | null>(null);
+  const [videoReady, setVideoReady] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: targetRef,
     offset: ["start start", "end end"],
   });
 
-  // Drive the video currentTime from scroll, smoothed with lerp.
+  // Make sure the video is loaded enough to be seekable.
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    const lerpFactor = 0.1;
+    const onLoaded = () => {
+      // Pause it — we drive currentTime manually from scroll.
+      video.pause();
+      setVideoReady(true);
+    };
+
+    if (video.readyState >= 1 && video.duration) {
+      onLoaded();
+    } else {
+      video.addEventListener("loadedmetadata", onLoaded);
+      video.addEventListener("loadeddata", onLoaded);
+    }
+
+    // Some browsers require a play() call once to "unlock" seeking on muted videos.
+    const tryPlay = video.play();
+    if (tryPlay && typeof tryPlay.then === "function") {
+      tryPlay.then(() => video.pause()).catch(() => {
+        /* ignored — muted+playsInline should work, but safe to ignore */
+      });
+    }
+
+    return () => {
+      video.removeEventListener("loadedmetadata", onLoaded);
+      video.removeEventListener("loadeddata", onLoaded);
+    };
+  }, []);
+
+  // Drive video currentTime from scroll, smoothed with lerp.
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !videoReady) return;
+
+    const lerpFactor = 0.12;
 
     const tick = () => {
       const diff = targetTimeRef.current - currentTimeRef.current;
       currentTimeRef.current += diff * lerpFactor;
-      if (video.duration && !Number.isNaN(video.duration)) {
+      const dur = video.duration;
+      if (dur && !Number.isNaN(dur) && Number.isFinite(dur)) {
+        const next = Math.min(Math.max(currentTimeRef.current, 0), dur - 0.05);
         try {
-          video.currentTime = Math.min(
-            Math.max(currentTimeRef.current, 0),
-            video.duration - 0.001,
-          );
+          video.currentTime = next;
         } catch {
-          /* ignore seek errors */
+          /* ignore */
         }
       }
       rafRef.current = requestAnimationFrame(tick);
     };
 
     const unsubscribe = scrollYProgress.on("change", (p) => {
-      if (video.duration) {
-        targetTimeRef.current = p * video.duration;
+      const dur = video.duration;
+      if (dur && Number.isFinite(dur)) {
+        targetTimeRef.current = p * dur;
       }
     });
 
@@ -66,13 +105,13 @@ const ScrollVideoHero = () => {
       unsubscribe();
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [scrollYProgress]);
+  }, [scrollYProgress, videoReady]);
 
-  // Per-section transforms (3 sections evenly spread across scroll progress).
+  // Intro text section ranges (first ~40% of scroll progress).
   const sectionRanges: Array<[number, number, number, number]> = [
-    [0.0, 0.08, 0.22, 0.32],
-    [0.34, 0.42, 0.55, 0.65],
-    [0.66, 0.74, 0.88, 0.98],
+    [0.0, 0.04, 0.1, 0.16],
+    [0.17, 0.22, 0.28, 0.34],
+    [0.35, 0.4, 0.46, 0.52],
   ];
 
   const opacities = sectionRanges.map(([a, b, c, d]) =>
@@ -81,50 +120,42 @@ const ScrollVideoHero = () => {
   const ys = sectionRanges.map(([a, b, c, d]) =>
     useTransform(scrollYProgress, [a, b, c, d], [40, 0, 0, -40]),
   );
-  const blurs = sectionRanges.map(([a, b, c, d]) =>
-    useTransform(
-      scrollYProgress,
-      [a, b, c, d],
-      ["8px", "0px", "0px", "8px"],
-    ),
-  );
 
-  const indicatorOpacity = useTransform(scrollYProgress, [0, 0.05], [1, 0]);
+  const indicatorOpacity = useTransform(scrollYProgress, [0, 0.03], [1, 0]);
+  // Dim the video a bit more once we leave the intro and enter feature content.
+  const overlayOpacity = useTransform(scrollYProgress, [0.5, 0.6], [0.5, 0.7]);
 
   return (
-    <section ref={targetRef} className="relative h-[300vh] w-full">
+    <section ref={targetRef} className="relative w-full" style={{ height: `${scrollVh}vh` }}>
+      {/* Sticky stage that holds the fixed video + overlaid scrolling content */}
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        {/* Fixed background video */}
+        {/* Background video — absolute inside the sticky stage so it stays put while we scroll */}
         <video
           ref={videoRef}
           src="/visoread-hero.mp4"
           muted
           playsInline
           preload="auto"
-          className="fixed inset-0 h-screen w-screen object-cover"
+          autoPlay
+          loop={false}
+          className="absolute inset-0 h-full w-full object-cover"
         />
         {/* Dark overlay */}
-        <div className="fixed inset-0 bg-background/50" />
+        <motion.div
+          style={{ opacity: overlayOpacity }}
+          className="absolute inset-0 bg-background"
+        />
 
-        {/* Text sections layered on top */}
-        <div className="relative z-10 flex h-screen items-center px-4 sm:px-8">
+        {/* Intro text sections layered on top */}
+        <div className="pointer-events-none absolute inset-0 z-10 flex items-center px-4 sm:px-8">
           <div className="mx-auto w-full max-w-7xl">
-            {sections.map((s, i) => (
+            {introSections.map((s, i) => (
               <motion.div
                 key={s.title}
-                style={{
-                  opacity: opacities[i],
-                  y: ys[i],
-                  filter: blurs[i].get
-                    ? undefined
-                    : undefined,
-                }}
+                style={{ opacity: opacities[i], y: ys[i] }}
                 className="absolute inset-0 flex items-center px-4 sm:px-8"
               >
-                <motion.div
-                  style={{ filter: blurs[i] }}
-                  className="mx-auto w-full max-w-7xl"
-                >
+                <div className="mx-auto w-full max-w-7xl">
                   <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium tracking-widest text-foreground/80 backdrop-blur">
                     <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--brand))]" />
                     {s.eyebrow}
@@ -135,7 +166,7 @@ const ScrollVideoHero = () => {
                   <p className="mt-6 max-w-md text-base leading-relaxed text-foreground/75 sm:text-lg">
                     {s.body}
                   </p>
-                </motion.div>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -160,6 +191,15 @@ const ScrollVideoHero = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Children render on top of the sticky stage. They occupy the remaining scroll height
+          inside this section, so the parent's scroll progress (which drives the video)
+          continues advancing as the user scrolls through them. */}
+      {children ? (
+        <div className="absolute inset-x-0 top-0 z-20" style={{ paddingTop: "100vh" }}>
+          {children}
+        </div>
+      ) : null}
     </section>
   );
 };
