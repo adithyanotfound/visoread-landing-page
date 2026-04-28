@@ -14,8 +14,6 @@ import {
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { useReveal } from "@/hooks/use-reveal";
-import LoadingScreen from "@/components/LoadingScreen";
-
 
 const navItems = [
   { label: "Features", href: "#features" },
@@ -146,25 +144,6 @@ const Index = () => {
   const [email, setEmail] = useState("");
   useReveal();
 
-  // ── Loading gate ─────────────────────────────────────────────────────────
-  const [videoLoaded, setVideoLoaded] = useState(false);
-  const [heroLoaded, setHeroLoaded] = useState(false);
-  const [isReady, setIsReady] = useState(false);
-
-  // Open the gate when both assets have signalled ready
-  useEffect(() => {
-    if (videoLoaded && heroLoaded) {
-      const t = setTimeout(() => setIsReady(true), 200);
-      return () => clearTimeout(t);
-    }
-  }, [videoLoaded, heroLoaded]);
-
-  // Fallback: never leave users stuck — reveal after 6 s regardless
-  useEffect(() => {
-    const t = setTimeout(() => setIsReady(true), 6000);
-    return () => clearTimeout(t);
-  }, []);
-
   // ── Scroll-driven video scrub ────────────────────────────────────────────
   const videoRef = useRef<HTMLVideoElement>(null);
   const currentTimeRef = useRef(0);
@@ -193,7 +172,6 @@ const Index = () => {
       targetTimeRef.current = t;
       currentTimeRef.current = t;
       try { video.currentTime = t; } catch { /* ignore */ }
-      setVideoLoaded(true); // signal the loading gate
     };
 
     video.addEventListener("loadedmetadata", markReady);
@@ -255,7 +233,6 @@ const Index = () => {
 
   return (
     <main className="min-h-screen text-foreground">
-      <LoadingScreen isReady={isReady} />
       {/* ================= FIXED BACKGROUND VIDEO ================= */}
       <video
         ref={videoRef}
@@ -301,7 +278,6 @@ const Index = () => {
           alt="Person wearing VisoRead smart glasses"
           width={1920}
           height={1080}
-          onLoad={() => setHeroLoaded(true)}
           className="absolute inset-0 h-full w-full object-cover object-center opacity-90"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black" />
@@ -342,10 +318,7 @@ const Index = () => {
       {/* ================= HEAR THE WORLD SECTION ================= */}
       <section className="relative z-10 flex min-h-screen items-center px-4 sm:px-8">
         <div className="mx-auto w-full max-w-7xl">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium tracking-widest text-foreground/80 backdrop-blur">
-            <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--brand))]" />
-            Voice-first
-          </span>
+
           <h2 className="mt-5 max-w-4xl text-5xl font-bold leading-[0.95] tracking-tight sm:text-6xl md:text-7xl lg:text-[5.5rem]">
             Hear the world,
             <br />
@@ -386,9 +359,7 @@ const Index = () => {
         >
           <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-12">
             <div className={`hidden lg:block ${i % 2 === 1 ? "lg:order-2" : ""}`}>
-              <span className="reveal inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium tracking-widest text-[hsl(var(--brand))] backdrop-blur">
-                {eyebrow}
-              </span>
+
               <h3 className="reveal reveal-delay-1 mt-5 text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
                 {title}
               </h3>
